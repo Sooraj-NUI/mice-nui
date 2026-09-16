@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: mice-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mice
+      POSTGRES_PASSWORD: mice_dev_password
+      POSTGRES_DB: mice
+    ports:
+      - "5433:5432"
+    volumes:
+      - mice_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  mice_postgres_data:
