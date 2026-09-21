@@ -38,6 +38,38 @@ export async function POST(
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const existingMember = await prisma.projectMember.findUnique({
+      where: {
+        userId_projectId: {
+          userId,
+          projectId,
+        },
+      },
+    });
+
+    if (existingMember) {
+      return NextResponse.json(
+        { error: "User is already a member of this project" },
+        { status: 409 },
+      );
+    }
+
     const member = await prisma.projectMember.create({
       data: {
         projectId,
